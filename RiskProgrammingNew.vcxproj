@@ -19,7 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Continent.cpp" />
+    <ClCompile Include="Country.cpp" />
+    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="RiskGame.cpp" />
+    <ClCompile Include="RiskStateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Continent.h" />
@@ -27,6 +32,8 @@
     <ClInclude Include="Edge.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="RiskStateManager.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>

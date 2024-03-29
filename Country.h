@@ -1,12 +1,20 @@
 #pragma once
+#include "Continent.h"
+#include "Player.h"
+#include <string>
 class Country
 {
 private:
 	Player _owner;
-	int _deployedArmies;
+	Continent _continent;
 
 public:
-	int numDeployed();
-	Player owner();
+	std::string _name;
+	int _deployedArmies;
+	Player* owner();
+	Continent continent();
+	void deployArmies(int num);
+
+	Country(std::string name) : _name(name) {}
 };
 
