@@ -35,10 +35,12 @@ void Player::deploy(Country &country, int num)
 {
     try
     {
-        if (num < _numArmies)
+        if (num <= _numArmies)
         {
             _numArmies -= num;
             country._deployedArmies += num;
+
+            std::cout << "Successfully deployed " << num << " armies to " << country._name << std::endl;
         }
         else
         {
