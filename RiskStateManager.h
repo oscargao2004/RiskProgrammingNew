@@ -4,10 +4,9 @@ class RiskStateManager
 public:
 	enum Phase
 	{
-		INITIAL = 0,
-		REINFORCEMENT = 1,
-		ATTACK = 2,
-		FORTIFICATION = 3
+		REINFORCEMENT = 0,
+		ATTACK = 1,
+		FORTIFICATION = 2
 	};
 
 	static void startNext();

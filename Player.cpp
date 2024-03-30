@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Country.h"
 
 int Player::armies()
 {
@@ -20,12 +21,17 @@ void Player::setArmies(int num)
     _numArmies = num;
 }
 
-std::vector<Country> Player::ownedCountries()
+std::vector<Country*> Player::ownedCountries()
 {
     return _ownedCountries;
 }
 
-void Player::deploy(Country country, int num)
+int Player::numOwnedCountries()
+{
+    return _ownedCountries.size();
+}
+
+void Player::deploy(Country &country, int num)
 {
     try
     {

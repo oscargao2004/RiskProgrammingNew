@@ -5,7 +5,7 @@ using namespace std;
 class Map
 {
 private:
-	static ifstream _mapFile;
+	ifstream _mapFile;
 
 	void initializeContinents();
 	void initializeCountries();

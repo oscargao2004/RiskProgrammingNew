@@ -1,5 +1,7 @@
 #include "RiskStateManager.h"
 
+int RiskStateManager::_currentPhase = 0;
+
 void RiskStateManager::startNext()
 {
 	_currentPhase++;
@@ -7,7 +9,7 @@ void RiskStateManager::startNext()
 
 void RiskStateManager::endTurn()
 {
-	_currentPhase = INITIAL;
+	_currentPhase = REINFORCEMENT;
 }
 
 int RiskStateManager::currentPhase()

@@ -5,7 +5,12 @@ int Continent::controlValue()
     return 0;
 }
 
-std::vector<Country> Continent::countries()
+std::vector<Country*> Continent::countries()
 {
     return _countries;
+}
+
+
+Continent::Continent()
+{
 }

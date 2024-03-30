@@ -1,10 +1,8 @@
-North America
-Canada UnitedStates
-Canada: UnitedStates
+Atlantis
+Eldoria
+Zephyria
 
-South America
-Venezuela Brazil
-Venezuela: Brazil
-
-
+Atlantis: Oceanica, Lemuria, Poseidonis
+Eldoria: Elvenheim, Dwarvenhold, Merfolkia
+Zephyria: Skyhaven, Cloudtopia, Windridge
 
