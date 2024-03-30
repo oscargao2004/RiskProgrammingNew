@@ -38,24 +38,23 @@ int main()
 		Player newPlayer;
 		players.push_back(newPlayer);
 	}
-	vector<Country> availableCountries = Map::_countries;
 
 	cout << "Assigning countries randomly...\n";
 	for (int i = 0; i < numPlayers; i++)
 	{
-		*availableCountries[randomInt(availableCountries.size())].owner() = players[i];
+		*map._countries[randomInt(map._countries.size())].owner() = players[i];
 	}
 
-	cout << "Beginning reinforcement stage...\n";
 	RiskStateManager::startNext();
 	running = true;
+
+	int currentPhase = RiskStateManager::currentPhase();
 
 	while (running)
 	{
 		//for loop loops through each player every three stages
 		for (int i = 0; i < numPlayers; i++)
 		{
-			int currentPhase = RiskStateManager::currentPhase();
 			Player currentPlayer = players[i];
 
 			/*if (currentPhase == RiskStateManager::INITIAL) //inital phase logic here
@@ -75,8 +74,10 @@ int main()
 				RiskStateManager::startNext();
 			}*/
 
-			if (currentPhase == RiskStateManager::REINFORCEMENT) //fortification phase logic here
+			if (RiskStateManager::currentPhase() == RiskStateManager::REINFORCEMENT) //reinforcement phase logic here
 			{
+				cout << "Beginning reinforcement stage...\n";
+
 				//give armies to player
 				currentPlayer.addArmies(currentPlayer.ownedCountries().size() / 3);
 
@@ -102,7 +103,7 @@ int main()
 				cout << "Input the number beside the country you want to deploy armies to: \n";
 				for (int i = 0; i < currentPlayer.ownedCountries().size(); i++)
 				{
-					cout << currentPlayer.ownedCountries()[i]->_name << i << endl;
+					cout << i << ": " << currentPlayer.ownedCountries()[i]->_name << endl;
 				}
 
 				while (currentPlayer.armies() > 0)
@@ -119,99 +120,145 @@ int main()
 					currentPlayer.deploy(*chosenCountry, choice);
 				}
 
-				cout << "You have no more armies to deploy.\n Beginning attack stage...\n";
+				cout << "You have no more armies to deploy.\n";
 				RiskStateManager::startNext();
 			}
 
-			else if (currentPhase == RiskStateManager::ATTACK) //attack phase logic here
+			else if (RiskStateManager::currentPhase() == RiskStateManager::ATTACK) //attack phase logic here
 			{
-				cout << "Input the number beside the country you wish to attack from: \n";
+				cout << "Beginning attack stage...\n";
+
+				cout << "Do you wish to attack? Y/N\n";
+
+				char choice;
+				cin >> choice;
+				if (choice == 'Y')
+				{
+					cout << "Input the number beside the country you wish to attack from: \n";
+					for (int i = 0; i < currentPlayer.ownedCountries().size(); i++)
+					{
+						if (currentPlayer.ownedCountries()[i]->_deployedArmies > 1)
+						{
+							cout << i << ": " << currentPlayer.ownedCountries()[i] << endl;
+						}
+					}
+
+					int choice;
+					cin >> choice;
+
+					Country* attackingCountry = currentPlayer.ownedCountries()[choice];
+
+					cout << "Input the number beside the country you wish to attack: \n";
+					for (int i = 0; i < attackingCountry->adjCountries().size(); i++)
+					{
+						if (attackingCountry->adjCountries()[i]->owner() != &currentPlayer)
+						{
+							cout << i << ": " << attackingCountry->adjCountries()[i]->_name << endl;
+						}
+					}
+
+					cin >> choice;
+					Country* defendingCountry = attackingCountry->adjCountries()[choice];
+
+					//roll dice
+					int atkRoll = 0;
+					int defRoll = 0;
+
+					for (int i = 0; i < 3; i++) //roll atk dice 3x
+					{
+						int roll = randomInt(6);
+						if (roll > atkRoll)
+						{
+							atkRoll = roll;
+						}
+						cout << "You rolled a max of: " << atkRoll << endl;
+					}
+
+					for (int i = 0; i < 2; i++) //roll def dice 2x
+					{
+						int roll = randomInt(6);
+						if (roll > defRoll)
+						{
+							defRoll = roll;
+						}
+						cout << "The defense rolled a max of: " << defRoll << endl;
+					}
+
+					//compare atk/def rolls
+					while (defendingCountry->_deployedArmies > 0 && attackingCountry->_deployedArmies > 0)
+					{
+						if (defRoll >= atkRoll)
+						{
+							attackingCountry->_deployedArmies--;
+							defendingCountry->_deployedArmies++;
+						}
+						else
+						{
+							defendingCountry->_deployedArmies--;
+							attackingCountry->_deployedArmies++;
+
+						}
+					}
+
+					//reassign country ownership depending on winning player
+					if (attackingCountry->_deployedArmies == 0)
+					{
+						attackingCountry->setOwner(*defendingCountry->owner());
+					}
+					else if (defendingCountry->_deployedArmies == 0)
+					{
+						defendingCountry->setOwner(*attackingCountry->owner());
+					}
+				}
+				else 
+				{
+					RiskStateManager::startNext();
+				}
+			}
+
+			else if (RiskStateManager::currentPhase() == RiskStateManager::FORTIFICATION) //fortification phase logic here
+			{
+				cout << "Beginning fortification phase...\n";
+
+				cout << "Input the number beside the country you wish to relocate armies FROM: \n";
 				for (int i = 0; i < currentPlayer.ownedCountries().size(); i++)
 				{
-					if (currentPlayer.ownedCountries()[i]->_deployedArmies > 1)
-					{
-						cout << i << ": " << currentPlayer.ownedCountries()[i] << endl;
-					}
+					cout << i << ": " << currentPlayer.ownedCountries()[i] << endl;
 				}
 
 				int choice;
 				cin >> choice;
 
-				Country* attackingCountry = currentPlayer.ownedCountries()[choice];
+				Country c1 = *currentPlayer.ownedCountries()[choice];
 
-				cout << "Input the number beside the country you wish to attack: \n";
-				for (int i = 0; i < attackingCountry->adjCountries().size(); i++)
+				cout << "Input the number beside the country you wish to relocate armies TO: \n";
+				for (int i = 0; i < currentPlayer.ownedCountries().size(); i++)
 				{
-					if (attackingCountry->adjCountries()[i]->owner() != &currentPlayer)
-					{
-						cout << i << ": " << attackingCountry->adjCountries()[i]->_name << endl;
-					}
+					cout << i << ": " << currentPlayer.ownedCountries()[i] << endl;
 				}
 
 				cin >> choice;
-				Country *defendingCountry = attackingCountry->adjCountries()[choice];
+				Country c2 = *currentPlayer.ownedCountries()[choice];
 
-				//roll dice
-				int atkRoll = 0;
-				int defRoll = 0;
+				cout << "How many armies would you like to relocate from " << c1._name <<
+					" to " << c2._name << " ?\n";
 
-				for (int i = 0; i < 3; i++) //roll atk dice 3x
-				{
-					int roll = randomInt(6);
-					if (roll > atkRoll)
-					{
-						atkRoll = roll;
-					}
-					cout << "You rolled a max of: " << atkRoll << endl;
-				}
+				cin >> choice;
+				//relocate armies
+				c1._deployedArmies -= choice;
+				c2._deployedArmies += choice;
 
-				for (int i = 0; i < 2; i++) //roll def dice 2x
-				{
-					int roll = randomInt(6);
-					if (roll > defRoll)
-					{
-						defRoll = roll;
-					}
-					cout << "The defense rolled a max of: " << defRoll << endl;
-				}
-
-				//compare atk/def rolls
-				while (defendingCountry->_deployedArmies > 0 && attackingCountry->_deployedArmies > 0)
-				{
-					if (defRoll >= atkRoll)
-					{
-						attackingCountry->_deployedArmies--;
-						defendingCountry->_deployedArmies++;
-					}
-					else
-					{
-						defendingCountry->_deployedArmies--;
-						attackingCountry->_deployedArmies++;
-
-					}
-				}
-
-				//reassign country ownership depending on winning player
-				if (attackingCountry->_deployedArmies == 0)
-				{
-					attackingCountry->setOwner(*defendingCountry->owner());
-				}
-				else if (defendingCountry->_deployedArmies == 0)
-				{
-					defendingCountry->setOwner(*attackingCountry->owner());
-				}
-				
+				cout << c1._name << " now has " << c1._deployedArmies << " deployed.\n";
+				cout << c2._name << " now has " << c2._deployedArmies << " deployed.\n";
 
 			}
 
-			else if (currentPhase == RiskStateManager::FORTIFICATION) //reinforcement phase logic here
+			for (int i = 0; i < players.size(); i++)
 			{
-
-			}
-			else //if invalid phase
-			{
-				cout << "invalid phase\n";
-				return 0;
+				if (players[i].ownedCountries().size() == 0)
+				{
+					players.erase(players.begin() + i);
+				}
 			}
 		}
 	}

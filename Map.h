@@ -12,7 +12,7 @@ private:
 	void initializeContinents();
 	void initializeCountries();
 public:
-	static vector<Country> _countries;
-	static vector<Continent> _continents;
+	vector<Country> _countries;
+	vector<Continent> _continents;
 	Map(string fileName);
 };
