@@ -2,7 +2,7 @@
 
 int Continent::controlValue()
 {
-    return 0;
+    return _controlValue;
 }
 
 std::vector<Country*> Continent::countries()

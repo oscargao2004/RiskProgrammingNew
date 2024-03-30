@@ -4,18 +4,17 @@
 #include <vector>
 #include <time.h>
 #include <cstdlib>
-#include "Map.h"
 #include "RiskStateManager.h"
 #include "Player.h"
 #include "Continent.h"
 #include "Country.h"
+#include "Map.h"
 
 using namespace std;
 
 string fileName = "Map.txt";
 bool running;
 
-vector<Country> countries;
 vector<Player> players;
 
 int randomInt(int max)
@@ -39,12 +38,12 @@ int main()
 		Player newPlayer;
 		players.push_back(newPlayer);
 	}
-	vector<Country> availableCountries = countries;
+	vector<Country> availableCountries = Map::_countries;
 
 	cout << "Assigning countries randomly...\n";
-	for (int pIndex = 0; pIndex < numPlayers; pIndex++)
+	for (int i = 0; i < numPlayers; i++)
 	{
-		*availableCountries[randomInt(availableCountries.size())].owner() = players[pIndex];
+		*availableCountries[randomInt(availableCountries.size())].owner() = players[i];
 	}
 
 	cout << "Beginning reinforcement stage...\n";
@@ -143,14 +142,14 @@ int main()
 				cout << "Input the number beside the country you wish to attack: \n";
 				for (int i = 0; i < attackingCountry->adjCountries().size(); i++)
 				{
-					if (attackingCountry->adjCountries()[i].owner() != &currentPlayer)
+					if (attackingCountry->adjCountries()[i]->owner() != &currentPlayer)
 					{
-						cout << i << ": " << attackingCountry->adjCountries()[i]._name << endl;
+						cout << i << ": " << attackingCountry->adjCountries()[i]->_name << endl;
 					}
 				}
 
 				cin >> choice;
-				Country *defendingCountry = &attackingCountry->adjCountries()[choice];
+				Country *defendingCountry = attackingCountry->adjCountries()[choice];
 
 				//roll dice
 				int atkRoll = 0;
@@ -192,14 +191,14 @@ int main()
 					}
 				}
 
+				//reassign country ownership depending on winning player
 				if (attackingCountry->_deployedArmies == 0)
 				{
 					attackingCountry->setOwner(*defendingCountry->owner());
 				}
-				else
+				else if (defendingCountry->_deployedArmies == 0)
 				{
 					defendingCountry->setOwner(*attackingCountry->owner());
-
 				}
 				
 

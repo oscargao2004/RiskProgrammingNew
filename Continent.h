@@ -8,7 +8,7 @@ class Continent
 private:
 	int _controlValue;
 	std::vector<Country*> _countries;
-	std::vector<std::vector<Country>> adjList;
+	//std::vector<std::vector<Country*>> adjList;
 
 public:
 	std::string _name;

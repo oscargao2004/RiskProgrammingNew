@@ -19,5 +19,6 @@ public:
 	int numOwnedCountries();
 	void deploy(Country &country, int num);
 
+	friend class Country;
 };
 
